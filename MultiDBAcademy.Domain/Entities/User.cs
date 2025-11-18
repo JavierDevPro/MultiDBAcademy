@@ -16,10 +16,11 @@ public class User
     public string Email { get; set; }
     
     [Required(ErrorMessage = "Role id is required")]
-    public Guid RoleId { get; set; }
+    public int RoleId { get; set; }
     
     [ForeignKey("RoleId")]
-    public Role? Role { get; set; }
+    [Required(ErrorMessage = "Role is required")]
+    public Role Role { get; set; }
     
     [Required(ErrorMessage = "Password is required")]
     public string PassHash { get; set; }
@@ -30,6 +31,7 @@ public class User
     public DateTime CreateAt {get; set;}
     public DateTime UpdateAt { get; set; }
     
+
     public List<InstanceDB> InstancesDB = new List<InstanceDB>();
     public List<Email> Emails = new List<Email>();
 }
