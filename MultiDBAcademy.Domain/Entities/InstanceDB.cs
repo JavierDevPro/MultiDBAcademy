@@ -4,12 +4,13 @@ namespace MultiDBAcademy.Domain.Entities;
 
 public class InstanceDB
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
+    public string Name { get; set; }
     public string Type { get; set; }
     public string State { get; set; }
     public string Ports { get; set; }
     
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
     [ForeignKey("UserId")]
     public User User { get; set; }
     
