@@ -16,6 +16,7 @@ public class User
     public DateTime CreateAt {get; set;}
     public DateTime UpdateAt { get; set; }
     public DateTime RefreshTokenExpire { get; set; }
-    
-    
+
+    public List<InstanceDB> InstancesDB = new List<InstanceDB>();
+    public List<Email> Emails = new List<Email>();
 }
