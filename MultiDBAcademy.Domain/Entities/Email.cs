@@ -1,6 +1,4 @@
 namespace MultiDBAcademy.Domain.Entities;
 
-public class exampleClass
-{
-    
-}
+public class Email
+{}
