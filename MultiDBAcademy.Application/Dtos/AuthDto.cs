@@ -4,7 +4,7 @@ namespace MultiDBAcademy.Application.Dtos;
 
 public class AuthResponseDto
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
     
     public string UserName { get; set; }
     public string Email { get; set; }
@@ -21,7 +21,7 @@ public class AuthResponseDto
 
 public class AuthReguisterResponseDTo
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
     
     public string UserName { get; set; }
     public string Email { get; set; }

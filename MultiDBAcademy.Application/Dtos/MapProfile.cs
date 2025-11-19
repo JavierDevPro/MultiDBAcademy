@@ -12,5 +12,13 @@ public class MapProfile : Profile
         
         CreateMap<User, AuthReguisterResponseDTo>();
         CreateMap<AuthReguisterResponseDTo, User>();
+        
+        CreateMap<User, RegisterDTo>();
+        CreateMap<RegisterDTo, User>()
+            .ForMember(dest => dest.PassHash, opt => opt.Ignore())
+            .ForMember(dest => dest.Role, opt => opt.Ignore());
+        
+        CreateMap<User, UserDto>();
+        CreateMap<UserDto, User>();
     }
 }

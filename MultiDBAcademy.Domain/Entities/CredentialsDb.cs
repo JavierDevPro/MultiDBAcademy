@@ -2,7 +2,7 @@ using MultiDBAcademy.Domain.Entities;
 
 public class CredentialsDb
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
 
     public string User { get; set; }
     public string PasswordHash { get; set; }

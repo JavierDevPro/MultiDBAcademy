@@ -6,7 +6,6 @@ using System.Text;
 using AutoMapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.IdentityModel.Tokens.Experimental;
 using MultiDBAcademy.Application.Dtos;
 using MultiDBAcademy.Application.Interfaces;
 using MultiDBAcademy.Domain.Entities;
@@ -20,12 +19,13 @@ public class AuthService : IAuthService
     private readonly IMapper _mapper;
     private readonly IConfiguration _config;
 
-    public AuthService(IRepository<User> repository, IMapper mapper, IConfiguration config)
+    public AuthService(IRepository<User> userRepository, IMapper mapper, IConfiguration config)
     {
         _mapper = mapper;
-        _repository = repository;
+        _repository = userRepository;
         _config = config;
     }
+
     public async Task<AuthReguisterResponseDTo> RegisterAsync(RegisterDTo registerDTo)
     {
         if (registerDTo == null)
@@ -34,51 +34,44 @@ public class AuthService : IAuthService
         if (string.IsNullOrEmpty(registerDTo.Email) || string.IsNullOrEmpty(registerDTo.Password) ||
             string.IsNullOrEmpty(registerDTo.UserName))
             throw new ArgumentException("Todos los campos son obligatorios");
-        
-        var users = await _repository.GetAllAsync();
-        var exist = users.FirstOrDefault(user => user.Email == registerDTo.Email);
+
+        var exist = await _repository.FindByEmailAsync(registerDTo.Email);
 
         if (exist != null)
             throw new ArgumentException("Ya existe un usuario registrado con el email ingresado");
-        
+
         var user = _mapper.Map<User>(registerDTo);
         user.PassHash = BCrypt.Net.BCrypt.HashPassword(registerDTo.Password);
         user.CreateAt = DateTime.UtcNow;
         user.UpdateAt = DateTime.UtcNow;
-        
+
         await _repository.AddAsync(user);
         return _mapper.Map<AuthReguisterResponseDTo>(user);
     }
-    
+
 
     public async Task<AuthResponseDto> LoginAsync(LoginDTo loginDTo)
     {
         if (loginDTo == null)
             throw new ArgumentNullException("El cuerpo de la peticion no puede estar vacio");
-        
+
         if (string.IsNullOrEmpty(loginDTo.Email) || string.IsNullOrEmpty(loginDTo.Password))
             throw new ArgumentException("Todos los campos son obligatorios");
-        
-        var users = await _repository.GetAllAsync();
-        var exist = users.FirstOrDefault(user => user.Email == loginDTo.Email);
 
-        if (exist == null || !BCrypt.Net.BCrypt.Verify(exist.PassHash, loginDTo.Password))
+        var exist = await _repository.GetUserByEmailWithRoleAsync(loginDTo.Email);
+
+        if (exist == null || !BCrypt.Net.BCrypt.Verify(loginDTo.Password, exist.PassHash))
             throw new SecurityException("Credenciales invalidas");
 
-        var token = GenerateJwt(exist);
-        var response = _mapper.Map<AuthResponseDto>(exist);
-        response.Token = token.ToString();
-
-        return response;
+        return await GenerateTokens(exist);
     }
 
     public async Task<bool> RevokeAsync(RevokeDto revokeDto)
     {
         if (revokeDto == null)
             throw new ArgumentNullException("El cuerpo de la peticion no puede estar vacio");
-        
-        var users = await _repository.GetAllAsync();
-        var exist = users.FirstOrDefault(user => user.Email == revokeDto.Email);
+
+        var exist = await _repository.FindByEmailAsync(revokeDto.Email);
 
         if (exist == null) return false;
 
@@ -94,14 +87,14 @@ public class AuthService : IAuthService
     {
         var principal = GetClaimsFromExpire(refreshTokenDTo.Token);
         var email = principal.FindFirst(ClaimTypes.Email);
-        
-        var users = await _repository.GetAllAsync();
-        var exist = users.FirstOrDefault(user => user.Email == email.Value);
 
-        if (exist == null || exist.RefreshToken != refreshTokenDTo.RefreshToken || exist.RefreshTokenExpire <= DateTime.UtcNow)
+        var exist = await _repository.FindByEmailAsync(email.Value);
+
+        if (exist == null || exist.RefreshToken != refreshTokenDTo.RefreshToken ||
+            exist.RefreshTokenExpire <= DateTime.UtcNow)
             throw new SecurityException("Token invalido o expiro");
 
-        return GenerateTokens(exist);
+        return await GenerateTokens(exist);
     }
 
     // Generate Jwt
@@ -120,21 +113,21 @@ public class AuthService : IAuthService
         };
 
         return new JwtSecurityToken(
-            issuer: _config["Jwt:Iusser"],
+            issuer: _config["Jwt:Issuer"],
             audience: _config["Jwt:Audience"],
             claims: claims,
             signingCredentials: credentials,
             expires: DateTime.UtcNow.AddMinutes(15)
         );
     }
-    
+
     // Generate Refresh
     private string GenerateRefresh()
     {
         var array = new byte[32];
         using var rng = RandomNumberGenerator.Create();
         rng.GetBytes(array);
-        return Encoding.UTF8.GetString(array);
+        return Convert.ToBase64String(array);
     }
 
     // Validamos que el token sea valido
@@ -156,12 +149,12 @@ public class AuthService : IAuthService
             !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
                 StringComparison.InvariantCultureIgnoreCase))
             throw new SecurityException("Token invalido");
-        
+
         return principal;
     }
-    
+
     // Generamos los tokens
-    private AuthResponseDto GenerateTokens(User user)
+    private async Task<AuthResponseDto> GenerateTokens(User user)
     {
         var token = GenerateJwt(user);
         var refresh = GenerateRefresh();
@@ -170,17 +163,15 @@ public class AuthService : IAuthService
         user.RefreshTokenExpire = DateTime.UtcNow.AddDays(7);
         user.UpdateAt = DateTime.UtcNow;
 
-        _repository.UpdateAsync(user);
+        await _repository.UpdateAsync(user);
+
+        var handler = new JwtSecurityTokenHandler();
+        var tokenString = handler.WriteToken(token);
 
         var response = _mapper.Map<AuthResponseDto>(user);
-        response.Token = token.ToString();
+        response.Token = tokenString;
 
         return response;
     }
 
 }
-
-
-
-
-
