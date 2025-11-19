@@ -18,5 +18,7 @@ public class MapProfile : Profile
             .ForMember(dest => dest.PassHash, opt => opt.Ignore())
             .ForMember(dest => dest.Role, opt => opt.Ignore());
         
+        CreateMap<User, UserDto>();
+        CreateMap<UserDto, User>();
     }
 }
