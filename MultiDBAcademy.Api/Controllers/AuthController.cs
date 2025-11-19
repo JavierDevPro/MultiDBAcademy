@@ -88,6 +88,7 @@ public class AuthController : ControllerBase
     }
     
     // Revoke Token
+    [HttpPost("removeke")]
     public async Task<ActionResult<bool>> RevokeToken(RevokeDto revokeDto)
     {
         try
