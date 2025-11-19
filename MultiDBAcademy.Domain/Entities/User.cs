@@ -6,7 +6,7 @@ namespace MultiDBAcademy.Domain.Entities;
 public class User
 { 
     [Key]
-    public Guid Id { get; set; }
+    public int Id { get; set; }
     
     [Required]
     public string UserName { get; set; }
@@ -20,7 +20,7 @@ public class User
     
     [ForeignKey("RoleId")]
     [Required(ErrorMessage = "Role is required")]
-    public Role Role { get; set; }
+    public Role? Role { get; set; }
     
     [Required(ErrorMessage = "Password is required")]
     public string PassHash { get; set; }
