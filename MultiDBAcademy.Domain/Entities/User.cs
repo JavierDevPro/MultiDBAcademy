@@ -20,7 +20,7 @@ public class User
     
     [ForeignKey("RoleId")]
     [Required(ErrorMessage = "Role is required")]
-    public Role Role { get; set; }
+    public Role? Role { get; set; }
     
     [Required(ErrorMessage = "Password is required")]
     public string PassHash { get; set; }
