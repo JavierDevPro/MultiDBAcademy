@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MultiDBAcademy.Application.Dtos;
+using MultiDBAcademy.Application.Interfaces;
 using MultiDBAcademy.Application.Services;
 
 namespace MultiDBAcademy.Api.Controllers;
@@ -8,9 +9,9 @@ namespace MultiDBAcademy.Api.Controllers;
 [Route("api/[controller]")]
 public class CredentialsDbController : ControllerBase
 {
-    private readonly CredentialsDbService _service;
+    private readonly ICredentialsDbService _service;
 
-    public CredentialsDbController(CredentialsDbService service)
+    public CredentialsDbController(ICredentialsDbService service)
     {
         _service = service;
     }

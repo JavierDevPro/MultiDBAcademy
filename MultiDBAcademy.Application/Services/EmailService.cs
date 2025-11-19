@@ -1,12 +1,20 @@
 using System.Net.Mail;
 using MimeKit;
 using MailKit.Net.Smtp;
+using Microsoft.Extensions.Configuration;
 using SmtpClient = MailKit.Net.Smtp.SmtpClient;
 
 namespace MultiDBAcademy.Application.Services;
 
 public class EmailService
 {
+    private readonly IConfiguration _configuration;
+
+    public EmailService(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
     private readonly string _fromAddress = "cardonabermudez15@gmail.com";
     private readonly string _fromName = "Tu Base de datos";
     private readonly string _smtpServer = "smtp.gmail.com";
