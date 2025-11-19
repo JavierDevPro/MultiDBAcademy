@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -11,6 +13,7 @@ using MultiDBAcademy.Domain.Interfaces;
 using MultiDBAcademy.Infrastructure.Data;
 using MultiDBAcademy.Infrastructure.Repositories;
 
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -25,7 +28,6 @@ builder.Services.AddScoped<IRepository<User>, UserRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddAutoMapper(typeof(MapProfile));
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IRepository<User>, UserRepository>();
 
 //  Database
 var connection = builder.Configuration.GetConnectionString("ConnectionDefault");
@@ -50,7 +52,8 @@ builder.Services.AddAuthentication(options =>
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
+            RoleClaimType = ClaimTypes.Role,
         };
     });
 
