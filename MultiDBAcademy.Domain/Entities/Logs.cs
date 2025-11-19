@@ -5,9 +5,9 @@ namespace MultiDBAcademy.Domain.Entities;
 
 public class Logs
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
     
-    public Guid InstanceId { get; set; }
+    public int InstanceId { get; set; }
     [ForeignKey("InstanceId")]
     public InstanceDB InstanceDB { get; set; }
     
