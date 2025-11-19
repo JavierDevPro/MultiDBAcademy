@@ -12,5 +12,11 @@ public class MapProfile : Profile
         
         CreateMap<User, AuthReguisterResponseDTo>();
         CreateMap<AuthReguisterResponseDTo, User>();
+        
+        CreateMap<User, RegisterDTo>();
+        CreateMap<RegisterDTo, User>()
+            .ForMember(dest => dest.PassHash, opt => opt.Ignore())
+            // ⬅️ ¡AGREGAR ESTO! Ignora la propiedad de navegación
+            .ForMember(dest => dest.Role, opt => opt.Ignore());
     }
 }
