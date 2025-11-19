@@ -62,7 +62,7 @@ public class AuthService : IAuthService
         var users = await _repository.GetAllAsync();
         var exist = users.FirstOrDefault(user => user.Email == loginDTo.Email);
 
-        if (exist == null || !BCrypt.Net.BCrypt.Verify(exist.PassHash, loginDTo.Password))
+        if (exist == null || !BCrypt.Net.BCrypt.Verify(loginDTo.Password, exist.PassHash)) 
             throw new SecurityException("Credenciales invalidas");
 
         var token = GenerateJwt(exist);

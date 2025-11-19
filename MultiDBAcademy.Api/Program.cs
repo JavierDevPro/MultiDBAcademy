@@ -24,6 +24,8 @@ builder.Services.AddAuthentication();
 builder.Services.AddScoped<IRepository<User>, UserRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddAutoMapper(typeof(MapProfile));
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRepository<User>, UserRepository>();
 
 //  Database
 var connection = builder.Configuration.GetConnectionString("ConnectionDefault");
