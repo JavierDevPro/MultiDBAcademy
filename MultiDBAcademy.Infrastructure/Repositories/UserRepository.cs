@@ -13,6 +13,13 @@ public class UserRepository : IRepository<User>
         _context = context;
     }
     
+    public async Task<User?> GetUserByEmailWithRoleAsync(string email)
+    {
+        return await _context.Users
+            .Include(u => u.Role) 
+            .FirstOrDefaultAsync(u => u.Email == email);
+    }
+    
     public async Task<User> GetByIdAsync(int id)
     {
         return await _context.Users.FindAsync(id);
@@ -25,21 +32,21 @@ public class UserRepository : IRepository<User>
 
     public async Task<User> AddAsync(User entity)
     {
-        _context.Add(entity);
+        _context.Users.Add(entity);
         await _context.SaveChangesAsync();
         return entity;
     }
 
     public async Task<User> UpdateAsync(User entity)
     {
-        _context.Update(entity);
+        _context.Users.Update(entity);
         await _context.SaveChangesAsync();
         return entity;
     }
 
     public async Task<bool> DeleteAsync(User entity)
     {
-        _context.Remove(entity);
+        _context.Users.Remove(entity);
         await _context.SaveChangesAsync();
         return true;
     }

@@ -59,17 +59,12 @@ public class AuthService : IAuthService
         if (string.IsNullOrEmpty(loginDTo.Email) || string.IsNullOrEmpty(loginDTo.Password))
             throw new ArgumentException("Todos los campos son obligatorios");
         
-        var users = await _repository.GetAllAsync();
-        var exist = users.FirstOrDefault(user => user.Email == loginDTo.Email);
+        var exist = await _repository.GetUserByEmailWithRoleAsync(loginDTo.Email);
 
-        if (exist == null || !BCrypt.Net.BCrypt.Verify(loginDTo.Password, exist.PassHash)) 
+        if (exist == null || !BCrypt.Net.BCrypt.Verify(loginDTo.Password, exist.PassHash))
             throw new SecurityException("Credenciales invalidas");
 
-        var token = GenerateJwt(exist);
-        var response = _mapper.Map<AuthResponseDto>(exist);
-        response.Token = token.ToString();
-
-        return response;
+        return GenerateTokens(exist);
     }
 
     public async Task<bool> RevokeAsync(RevokeDto revokeDto)
@@ -134,7 +129,7 @@ public class AuthService : IAuthService
         var array = new byte[32];
         using var rng = RandomNumberGenerator.Create();
         rng.GetBytes(array);
-        return Encoding.UTF8.GetString(array);
+        return Convert.ToBase64String(array);
     }
 
     // Validamos que el token sea valido
@@ -172,11 +167,15 @@ public class AuthService : IAuthService
 
         _repository.UpdateAsync(user);
 
+        var handler = new JwtSecurityTokenHandler();
+        var tokenString = handler.WriteToken(token);
+
         var response = _mapper.Map<AuthResponseDto>(user);
-        response.Token = token.ToString();
+        response.Token = tokenString;
 
         return response;
     }
+    
 
 }
 
