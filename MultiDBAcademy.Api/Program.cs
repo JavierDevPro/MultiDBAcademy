@@ -29,6 +29,11 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddAutoMapper(typeof(MapProfile));
 builder.Services.AddScoped<IUserService, UserService>();
 
+builder.Services.AddScoped<ICredentialsDbRepository, CredentialsDbRepository>();
+builder.Services.AddScoped<ICredentialsDbService, CredentialsDbService>();
+builder.Services.AddScoped<EmailService>();
+
+
 //  Database
 var connection = builder.Configuration.GetConnectionString("ConnectionDefault");
 
