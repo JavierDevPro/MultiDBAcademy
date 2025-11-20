@@ -7,17 +7,17 @@ public class Email
 {
     [Key]
     public int Id { get; set; }
-
-    public string Sender { get; set; }
-
+    
+    public string Sender { get; set; } = string.Empty;
+    
     public int UserId { get; set; }
     public User User { get; set; }
-
-    public string Issue { get; set; }
-
+    
+    public string Issue { get; set; } = string.Empty;
+    
     public int CredentialsDBId { get; set; }
     public CredentialsDb CredentialsDB { get; set; }
-
+    
     public DateTime CreateAt { get; set; }
     public DateTime UpdateAt { get; set; }
 }
