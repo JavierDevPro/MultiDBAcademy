@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.InteropServices.JavaScript;
 
 namespace MultiDBAcademy.Domain.Entities;
 

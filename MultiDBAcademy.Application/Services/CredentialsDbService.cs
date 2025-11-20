@@ -7,10 +7,10 @@ namespace MultiDBAcademy.Application.Services;
 
 public class CredentialsDbService : ICredentialsDbService
 {
-    private readonly ICredentialsDbRepository _repository;
+    private readonly ICredentialsRepository _repository;
     private readonly EmailService _emailService;
 
-    public CredentialsDbService(ICredentialsDbRepository repository, EmailService emailService)
+    public CredentialsDbService(ICredentialsRepository repository, EmailService emailService)
     {
         _repository = repository;
         _emailService = emailService;
@@ -22,18 +22,18 @@ public class CredentialsDbService : ICredentialsDbService
 
         var credentialsEntity = new CredentialsDb
         {
-            User = credentialsDbDto.User,
+            Username = credentialsDbDto.Username,
             PasswordHash = hashedPassword,
             Database = credentialsDbDto.Database,
             Port = credentialsDbDto.Port,
             Host = credentialsDbDto.Host,
         };
 
-        await _repository.CreateCredentialsDb(credentialsEntity);
+        await _repository.AddAsync(credentialsEntity);
 
         string emailBody = $@"
             <h3>Tus Credenciales para tu base de datos</h3>
-            <p><strong>Usuario:</strong>{credentialsDbDto.User}</p>
+            <p><strong>Usuario:</strong>{credentialsDbDto.Username}</p>
             <p><strong>Password:</strong>{credentialsDbDto.PasswordHash}</p>
             <p><strong>Database:</strong>{credentialsDbDto.Database}</p>
             <p><strong>Host:</strong>{credentialsDbDto.Host}</p>
