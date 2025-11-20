@@ -73,8 +73,6 @@ builder.Services.AddScoped<EmailService>();
 
 // ========== NUEVO SERVICIO (Instancias) ==========
 builder.Services.AddScoped<IInstanceService, InstanceService>();
-builder.Services.AddTransient<IDbEngineService, MySqlEngineService>();
-builder.Services.AddTransient<IDbEngineService, PostgreSqlEngineService>();
 
 // ========== SERVICIOS DE MOTORES DE BD (DB ENGINES) ==========
 builder.Services.AddSingleton<IDbEngineService, MySqlEngineService>();
