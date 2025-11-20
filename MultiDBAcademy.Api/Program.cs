@@ -59,7 +59,7 @@ builder.Services.AddControllers();
 
 // ========== REPOSITORIOS EXISTENTES ==========
 builder.Services.AddScoped<IRepository<User>, UserRepository>();
-builder.Services.AddScoped<ICredentialsDbRepository, CredentialsDbRepository>();
+builder.Services.AddScoped<ICredentialsRepository, CredentialsRepository>();
 
 // ========== NUEVOS REPOSITORIOS (Instancias) ==========
 builder.Services.AddScoped<IInstanceRepository, InstanceRepository>();
@@ -73,6 +73,8 @@ builder.Services.AddScoped<EmailService>();
 
 // ========== NUEVO SERVICIO (Instancias) ==========
 builder.Services.AddScoped<IInstanceService, InstanceService>();
+builder.Services.AddTransient<IDbEngineService, MySqlEngineService>();
+builder.Services.AddTransient<IDbEngineService, PostgreSqlEngineService>();
 
 // ========== SERVICIOS DE MOTORES DE BD (DB ENGINES) ==========
 builder.Services.AddSingleton<IDbEngineService, MySqlEngineService>();

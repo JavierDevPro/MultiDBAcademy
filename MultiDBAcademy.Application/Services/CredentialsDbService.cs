@@ -7,10 +7,10 @@ namespace MultiDBAcademy.Application.Services;
 
 public class CredentialsDbService : ICredentialsDbService
 {
-    private readonly ICredentialsDbRepository _repository;
+    private readonly ICredentialsRepository _repository;
     private readonly EmailService _emailService;
 
-    public CredentialsDbService(ICredentialsDbRepository repository, EmailService emailService)
+    public CredentialsDbService(ICredentialsRepository repository, EmailService emailService)
     {
         _repository = repository;
         _emailService = emailService;
@@ -29,7 +29,7 @@ public class CredentialsDbService : ICredentialsDbService
             Host = credentialsDbDto.Host,
         };
 
-        await _repository.CreateCredentialsDb(credentialsEntity);
+        await _repository.AddAsync(credentialsEntity);
 
         string emailBody = $@"
             <h3>Tus Credenciales para tu base de datos</h3>

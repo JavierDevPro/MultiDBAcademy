@@ -1,6 +1,30 @@
 version: '3.8'
 
 services:
+  
+  multibdacademy-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: multibdacademy-api
+    restart: always
+    ports:
+      - "8080:8080"
+      - "5245:8080"  # Para mantener compatibilidad con tu puerto actual
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+    depends_on:
+      - mysql-master
+      - postgres-master
+      - mongo-master
+      - redis-master
+      - sqlserver-master
+    networks:
+      - dbacademy-network
+    volumes:
+      - ./MultiDBAcademy.Api/appsettings.json:/app/appsettings.json:ro
+      
   mysql-master:
     image: mysql:8.0
     container_name: mysql-master
@@ -8,7 +32,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: RootPass123!
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql-data:/var/lib/mysql
     networks:
