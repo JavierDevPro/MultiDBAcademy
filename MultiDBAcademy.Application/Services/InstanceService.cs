@@ -59,8 +59,8 @@ public class InstanceService : IInstanceService
             Username = username,
             PasswordHash = password, // En producción, considera hashear
             Database = databaseName,
-            Host = _config[$"DbMasters:{dto.EngineType}:Host"],
-            Port = int.Parse(_config[$"DbMasters:{dto.EngineType}:Port"]),
+            Host = GetHostForEngine(dto.EngineType),
+            Port = engineService.DefaultPort,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -73,8 +73,8 @@ public class InstanceService : IInstanceService
             EngineType = dto.EngineType,
             Status = DbInstanceStatus.Active,
             DatabaseName = databaseName,
-            Host = _config[$"DbMasters:{dto.EngineType}:Host"],
-            Port = int.Parse(_config[$"DbMasters:{dto.EngineType}:Port"]),
+            Host = GetHostForEngine(dto.EngineType),
+            Port = engineService.DefaultPort,
             UserId = dto.UserId,
             CredentialsDbId = savedCredentials.Id,
             CreateAt = DateTime.UtcNow,
@@ -86,7 +86,19 @@ public class InstanceService : IInstanceService
         // 8. Retornar DTO de respuesta
         return MapToResponseDto(savedInstance, user, savedCredentials);
     }
-    
+
+    private string GetHostForEngine(DbEngineType engineType)
+    {
+        return engineType switch
+        {
+            DbEngineType.MySQL => "mysql-master",
+            DbEngineType.PostgreSQL => "postgres-master",
+            DbEngineType.MongoDB => "mongo-master", 
+            DbEngineType.Redis => "redis-master",
+            DbEngineType.SQLServer => "sqlserver-master",
+            _ => "localhost"
+        };
+    }
 
     public async Task<InstanceResponseDto> GetByIdAsync(int id, int requestingUserId, bool isAdmin)
     {
