@@ -18,7 +18,7 @@ public class RedisEngineService : IDbEngineService
         var port = configuration["DbMasters:Redis:Port"] ?? "6379";
         var password = configuration["DbMasters:Redis:Password"] ?? "RootPass123!";
 
-        _masterConnectionString = $"{host}:{port},password={password}";
+        _masterConnectionString = $"{host}:{port},password={password},abortConnect=false,connectTimeout=30000";
     }
 
     public async Task<bool> CreateDatabaseAsync(string databaseName, string username, string password)

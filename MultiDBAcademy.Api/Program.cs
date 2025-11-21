@@ -74,6 +74,9 @@ builder.Services.AddScoped<EmailService>();
 // ========== NUEVO SERVICIO (Instancias) ==========
 builder.Services.AddScoped<IInstanceService, InstanceService>();
 
+// Agregar en el contenedor DI
+builder.Services.AddScoped<IQueryExecutionService, QueryExecutionService>();
+
 // ========== SERVICIOS DE MOTORES DE BD (DB ENGINES) ==========
 builder.Services.AddSingleton<IDbEngineService, MySqlEngineService>();
 builder.Services.AddSingleton<IDbEngineService, PostgreSqlEngineService>();
