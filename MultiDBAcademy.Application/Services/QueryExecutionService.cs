@@ -279,7 +279,7 @@ public class QueryExecutionService : IQueryExecutionService
             for (int i = 0; i < reader.FieldCount; i++)
             {
                 var value = reader.GetValue(i);
-                row[reader.GetName(i)] = value == DBNull.Value ? null : value;
+                row[reader.GetName(i)] = value.Equals(DBNull.Value) ? null : value;
             }
             result.Data.Add(row);
         }
