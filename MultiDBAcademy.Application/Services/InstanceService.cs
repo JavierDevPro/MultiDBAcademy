@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using MultiDBAcademy.Application.Dtos;
 using MultiDBAcademy.Application.Helpers;
 using MultiDBAcademy.Application.Interfaces;
@@ -12,6 +13,7 @@ public class InstanceService : IInstanceService
     private readonly ICredentialsRepository _credentialsRepository;
     private readonly IRepository<User> _userRepository;
     private readonly IEnumerable<IDbEngineService> _dbEngineServices;
+    private readonly IConfiguration _config;
 
     public InstanceService(
         IInstanceRepository instanceRepository,
@@ -57,11 +59,11 @@ public class InstanceService : IInstanceService
             Username = username,
             PasswordHash = password, // En producción, considera hashear
             Database = databaseName,
-            Host = "localhost",
-            Port = engineService.DefaultPort,
+            Host = _config[$"DbMasters:{dto.EngineType}:Host"],
+            Port = int.Parse(_config[$"DbMasters:{dto.EngineType}:Port"]),
             CreatedAt = DateTime.UtcNow
         };
-        
+
         var savedCredentials = await _credentialsRepository.AddAsync(credentials);
 
         // 7. Crear registro de instancia
@@ -71,8 +73,8 @@ public class InstanceService : IInstanceService
             EngineType = dto.EngineType,
             Status = DbInstanceStatus.Active,
             DatabaseName = databaseName,
-            Host = "localhost",
-            Port = engineService.DefaultPort,
+            Host = _config[$"DbMasters:{dto.EngineType}:Host"],
+            Port = int.Parse(_config[$"DbMasters:{dto.EngineType}:Port"]),
             UserId = dto.UserId,
             CredentialsDbId = savedCredentials.Id,
             CreateAt = DateTime.UtcNow,
@@ -84,6 +86,7 @@ public class InstanceService : IInstanceService
         // 8. Retornar DTO de respuesta
         return MapToResponseDto(savedInstance, user, savedCredentials);
     }
+    
 
     public async Task<InstanceResponseDto> GetByIdAsync(int id, int requestingUserId, bool isAdmin)
     {

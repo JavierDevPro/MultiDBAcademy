@@ -19,7 +19,8 @@ public class SqlServerEngineService : IDbEngineService
         var user = configuration["DbMasters:SQLServer:User"] ?? "sa";
         var password = configuration["DbMasters:SQLServer:Password"] ?? "RootPass123!";
 
-        _masterConnectionString = $"Server={host},{port};Database=master;User Id={user};Password={password};TrustServerCertificate=True;";
+        // En SqlServerEngineService, agrega timeout
+        _masterConnectionString = $"Server={host},{port};Database=master;User Id={user};Password={password};TrustServerCertificate=True;Connect Timeout=30;";
     }
 
     public async Task<bool> CreateDatabaseAsync(string databaseName, string username, string password)
