@@ -1,16 +1,24 @@
-using MultiDBAcademy.Domain.Entities;
+namespace MultiDBAcademy.Domain.Entities;
 
 public class CredentialsDb
 {
-    public Guid Id { get; set; }
-
-    public string User { get; set; }
-    public string PasswordHash { get; set; }
-    public string Database { get; set; }
-    public string Port { get; set; }
-    public string Host { get; set; }
-
+    public int Id { get; set; }
+    
+    // Credenciales de acceso al motor
+    public string Username { get; set; } = string.Empty;
+    public string PasswordHash { get; set; } = string.Empty;
+    
+    // Información de conexión
+    public string Database { get; set; } = string.Empty;
+    public string Host { get; set; } = "localhost";
+    public int Port { get; set; }
+    
+    // Fechas
     public DateTime CreatedAt { get; set; }
-
-    public Email Email { get; set; }
+    
+    // Relación 1-1 con Email
+    public Email? Email { get; set; }
+    
+    // Relación con InstanceDB
+    public InstanceDB? Instance { get; set; }
 }

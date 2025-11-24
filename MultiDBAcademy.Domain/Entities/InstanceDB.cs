@@ -4,19 +4,33 @@ namespace MultiDBAcademy.Domain.Entities;
 
 public class InstanceDB
 {
-    public Guid Id { get; set; }
-    public string Name { get; set; }
-    public string Type { get; set; }
-    public string State { get; set; }
-    public string Ports { get; set; }
+    public int Id { get; set; }
     
-    public Guid UserId { get; set; }
+    // Información de la instancia
+    public string Name { get; set; } = string.Empty;
+    public DbEngineType EngineType { get; set; } // Cambiamos "Type" por el enum
+    public DbInstanceStatus Status { get; set; }  // Cambiamos "State" por el enum
+    
+    // Información de la base de datos creada en el motor master
+    public string DatabaseName { get; set; } = string.Empty;
+    public string Host { get; set; } = "localhost";
+    public int Port { get; set; }
+    
+    // Relación con estudiante
+    public int UserId { get; set; }
     [ForeignKey("UserId")]
     public User User { get; set; }
     
-    public DateTime CreateAt {get; set;}
+    // Relación con credenciales
+    public int? CredentialsDbId { get; set; }
+    [ForeignKey("CredentialsDbId")]
+    public CredentialsDb? Credentials { get; set; }
+    
+    // Fechas
+    public DateTime CreateAt { get; set; }
     public DateTime UpdateAt { get; set; }
-
-    public List<Logs> Logs = new List<Logs>();
-
+    public DateTime? LastAccessedAt { get; set; }
+    
+    // Logs
+    public List<Logs> Logs { get; set; } = new List<Logs>();
 }
