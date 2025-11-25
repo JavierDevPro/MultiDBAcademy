@@ -12,10 +12,73 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: "Production"
       ASPNETCORE_URLS: "http://+:8080"
-
     volumes:
       - ./MultiDBAcademy.Api/appsettings.json:/app/appsettings.json:ro
+    networks:
+      - dbacademy-network
+    depends_on:
+      - mysql-master
+      - postgres-master
+      - mongo-master
+      - redis-master
+      - sqlserver-master
 
+  mysql-master:
+    image: mysql:8
+    container_name: mysql-master
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: AdminPass123!
+      MYSQL_DATABASE: MultiDb
+    ports:
+      - "3306:3306"
+    networks:
+      - dbacademy-network
+
+  postgres-master:
+    image: postgres:16
+    container_name: postgres-master
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: RootPass123!
+      POSTGRES_DB: MultiDb
+    ports:
+      - "5432:5432"
+    networks:
+      - dbacademy-network
+
+  mongo-master:
+    image: mongo:7
+    container_name: mongo-master
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: RootPass123!
+    ports:
+      - "27017:27017"
+    networks:
+      - dbacademy-network
+
+  redis-master:
+    image: redis:7
+    container_name: redis-master
+    restart: always
+    command: ["redis-server", "--requirepass", "RootPass123!"]
+    ports:
+      - "6379:6379"
+    networks:
+      - dbacademy-network
+
+  sqlserver-master:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver-master
+    restart: always
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "RootPass123!"
+    ports:
+      - "1433:1433"
     networks:
       - dbacademy-network
 
