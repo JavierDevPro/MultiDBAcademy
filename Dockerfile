@@ -13,13 +13,18 @@ COPY . .
 
 RUN dotnet build "MultiDBAcademy.Api/MultiDBAcademy.Api.csproj" -c Release -o /app/build
 
+# === Publish ===
 FROM build AS publish
 WORKDIR /src
 RUN dotnet publish "MultiDBAcademy.Api/MultiDBAcademy.Api.csproj" -c Release -o /app/publish
 
+# === Final stage ===
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
+# Render asigna el puerto en la variable $PORT
+ENV ASPNETCORE_URLS=http://0.0.0.0:$PORT
 EXPOSE 8080
+
 ENTRYPOINT ["dotnet", "MultiDBAcademy.Api.dll"]
