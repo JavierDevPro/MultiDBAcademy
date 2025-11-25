@@ -141,7 +141,7 @@ if (app.Environment.IsDevelopment())
 //app.UseHttpsRedirection();
 
 // Si activaste CORS, descomenta la siguiente línea:
-// app.UseCors("AllowAll");
+app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -152,4 +152,5 @@ app.MapControllers();
 
 
 app.Run();
+
 
