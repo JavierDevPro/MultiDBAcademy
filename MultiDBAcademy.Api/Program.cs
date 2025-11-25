@@ -146,7 +146,10 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapGet("/", () => "API MultiDBAcademy Running...");
+
 app.MapControllers();
 
 
 app.Run();
+
